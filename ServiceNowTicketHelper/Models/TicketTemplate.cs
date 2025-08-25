@@ -1,22 +1,80 @@
-using System;
+using ServiceNowTicketHelper.ViewModels;
 
 namespace ServiceNowTicketHelper.Models
 {
-    /// <summary>
-    /// 하나의 티켓 템플릿에 대한 데이터를 정의합니다.
-    /// </summary>
-    public class TicketTemplate
+    // ViewModelBase�� ��ӹ޾� INotifyPropertyChanged ����� ������ �մϴ�.
+    public class TicketTemplate : ViewModelBase
     {
-        // UI의 템플릿 목록에 표시될 고유한 이름
-        public string TemplateName { get; set; }
+        private string _templateName = string.Empty;
+        public string TemplateName
+        {
+            get => _templateName;
+            set { _templateName = value; OnPropertyChanged(); }
+        }
 
-        // '서비스/어플리케이션' 필드에 입력될 값
-        public string ServiceApplication { get; set; }
+        private string _serviceApplication = string.Empty;
+        public string ServiceApplication
+        {
+            get => _serviceApplication;
+            set { _serviceApplication = value; OnPropertyChanged(); }
+        }
 
-        // '간단한 설명' 필드에 입력될 값
-        public string ShortDescription { get; set; }
+        private string _shortDescription = string.Empty;
+        public string ShortDescription
+        {
+            get => _shortDescription;
+            set { _shortDescription = value; OnPropertyChanged(); }
+        }
 
-        // '상세 설명' 필드에 입력될 값
-        public string DetailedDescription { get; set; }
+        private string _detailedDescription = string.Empty;
+        public string DetailedDescription
+        {
+            get => _detailedDescription;
+            set { _detailedDescription = value; OnPropertyChanged(); }
+        }
+
+        // --- ��ǥ �Ӽ��鵵 ��� OnPropertyChanged�� ȣ���ϵ��� ���� ---
+
+        private int _serviceAppX;
+        public int ServiceAppX
+        {
+            get => _serviceAppX;
+            set { _serviceAppX = value; OnPropertyChanged(); }
+        }
+
+        private int _serviceAppY;
+        public int ServiceAppY
+        {
+            get => _serviceAppY;
+            set { _serviceAppY = value; OnPropertyChanged(); }
+        }
+
+        private int _shortDescX;
+        public int ShortDescX
+        {
+            get => _shortDescX;
+            set { _shortDescX = value; OnPropertyChanged(); }
+        }
+
+        private int _shortDescY;
+        public int ShortDescY
+        {
+            get => _shortDescY;
+            set { _shortDescY = value; OnPropertyChanged(); }
+        }
+
+        private int _detailDescX;
+        public int DetailDescX
+        {
+            get => _detailDescX;
+            set { _detailDescX = value; OnPropertyChanged(); }
+        }
+
+        private int _detailDescY;
+        public int DetailDescY
+        {
+            get => _detailDescY;
+            set { _detailDescY = value; OnPropertyChanged(); }
+        }
     }
 }

@@ -17,7 +17,6 @@
 
         <Label Grid.Row="0" Content="1. 실행할 템플릿을 선택하세요:" FontWeight="Bold"/>
 
-        <!-- 템플릿 목록 (ListBox) -->
         <ListBox Grid.Row="1" Margin="5"
                  ItemsSource="{Binding Templates}"
                  SelectedItem="{Binding SelectedTemplate}">
@@ -28,16 +27,13 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- 실행 버튼 -->
         <Button Grid.Row="2" Margin="5" Padding="0,10"
                 Content="웹페이지에 내용 채우기"
                 Command="{Binding FillTicketCommand}"/>
 
-        <!-- 템플릿 관리 버튼 -->
         <Button Grid.Row="3" Margin="5,0,5,5" Content="템플릿 관리..."
                 Command="{Binding ManageTemplatesCommand}"/>
 
-        <!-- 상태 표시줄 -->
         <StatusBar Grid.Row="4" Margin="5,0,5,0">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}"/>

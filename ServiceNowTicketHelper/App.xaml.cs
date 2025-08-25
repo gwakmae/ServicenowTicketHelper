@@ -1,44 +1,74 @@
 ﻿using ServiceNowTicketHelper.Services;
 using ServiceNowTicketHelper.ViewModels;
-using ServiceNowTicketHelper.Views; // MainWindow를 사용하기 위해 추가
+using ServiceNowTicketHelper.Views;
 using System.Windows;
+using InputSimulatorEx;
+using InputSimulatorEx.Native;
+using System.Threading.Tasks;
+using System; // MainViewModel 생성자 오류 방지를 위해 추가
 
 namespace ServiceNowTicketHelper
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        // 애플리케이션 전체에서 사용할 서비스와 뷰모델 인스턴스
-        private readonly IAutomationService _automationService;
-        private readonly ITemplateService _templateService;
-        private readonly MainViewModel _mainViewModel;
-        private readonly MainWindow _mainWindow;
+        private IAutomationService? _automationService;
+        private ITemplateService? _templateService;
+        private MainViewModel? _mainViewModel;
+        private MainWindow? _mainWindow;
 
         public App()
         {
-            // 1. 서비스 인스턴스 생성 (프로그램 전체에서 하나만 사용 - Singleton)
-            _automationService = new PlaywrightAutomationService();
-            _templateService = new JsonTemplateService();
+        }
 
-            // 2. ViewModel 인스턴스 생성 및 서비스 주입
-            //    MainViewModel이 필요로 하는 서비스들을 생성자의 인자로 전달합니다.
+        protected override async void OnStartup(StartupEventArgs e)
+        {
+            var result = MessageBox.Show("프로그램을 시작합니다.\n\n" +
+                                     "1. 엣지(Edge) 브라우저를 최대화하고 100% 배율로 맞춰주세요.\n" +
+                                     "2. '확인'을 누른 후, 3초 안에 엣지 브라우저를 클릭하여 활성화해주세요.\n" +
+                                     "   (자동으로 배율을 75%로 조절합니다.)",
+                                     "초기 설정 안내", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+
+            if (result == MessageBoxResult.Cancel)
+            {
+                Current.Shutdown();
+                return;
+            }
+
+            // 사용자가 브라우저를 클릭할 시간
+            await Task.Delay(3000);
+
+            // 브라우저 배율을 75%로 설정
+            var simulator = new InputSimulator();
+            await SetBrowserZoomTo75Percent(simulator);
+
+            MessageBox.Show("브라우저 배율이 75%로 설정되었습니다.\n이제 프로그램을 사용할 수 있습니다.", "설정 완료");
+
+            _automationService = new MacroAutomationService();
+            _templateService = new JsonTemplateService();
             _mainViewModel = new MainViewModel(_automationService, _templateService);
 
-            // 3. 메인 뷰(창) 인스턴스 생성 및 ViewModel 연결
-            //    MainWindow의 DataContext에 우리가 만든 MainViewModel을 할당합니다.
             _mainWindow = new MainWindow
             {
                 DataContext = _mainViewModel
             };
+
+            _mainWindow.Show();
+
+            base.OnStartup(e);
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        private async Task SetBrowserZoomTo75Percent(IInputSimulator simulator)
         {
-            // 4. 애플리케이션 시작 시, 설정이 완료된 메인 창을 보여줍니다.
-            _mainWindow.Show();
-            base.OnStartup(e);
+            simulator.Keyboard.ModifiedKeyStroke(VirtualKeyCode.CONTROL, VirtualKeyCode.VK_0);
+            await Task.Delay(500);
+            simulator.Keyboard.KeyDown(VirtualKeyCode.CONTROL);
+            simulator.Mouse.VerticalScroll(-1);
+            await Task.Delay(100);
+            simulator.Mouse.VerticalScroll(-1);
+            await Task.Delay(100);
+            simulator.Mouse.VerticalScroll(-1);
+            simulator.Keyboard.KeyUp(VirtualKeyCode.CONTROL);
+            await Task.Delay(500);
         }
     }
 }
